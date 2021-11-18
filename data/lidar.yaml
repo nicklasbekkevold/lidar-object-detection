@@ -1,7 +1,8 @@
-path: ../../data/00_yolo
+path: ../../data/all_videos
 train: images/
 val: images/
 
 # Classes
 nc: 8
-names: ['car', 'truck', 'bus', 'motorcycle', 'bicycle', 'scooter', 'person', 'rider']
+names:
+  ["car", "truck", "bus", "motorcycle", "bicycle", "scooter", "person", "rider"]
