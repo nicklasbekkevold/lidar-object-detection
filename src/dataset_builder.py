@@ -39,6 +39,10 @@ class DatasetBuilder:
         for dir in dirs:
             if dir == "all_videos":
                 continue
+            for root, dirs, files in os.walk(f"./data/{dir}/labels", topdown=True):
+                for name in files:
+                    print(os.path.join(root, name))
+            print(dir)
             _, _, files = next(os.walk(f"./data/{dir}/labels", topdown=True))
             self.num_of_label_files[int(dir.split("_")[0])] = len(files)
 
