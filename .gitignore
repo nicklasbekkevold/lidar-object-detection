@@ -133,3 +133,5 @@ dmypy.json
 
 # Ignore YOLOv5 git package
 yolov5/
+
+data/all_videos_split/
