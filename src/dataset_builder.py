@@ -39,13 +39,12 @@ class DatasetBuilder:
         for dir in dirs:
             if dir == "all_videos":
                 continue
-            print(dir)
             _, _, files = next(
                 os.walk(f"./data/{dir}/obj_train_data", topdown=True))
             self.num_of_label_files[int(dir.split("_")[0])] = len(files)
 
     def generate_label_paths(self):
-        self.label_paths = {video_number: [f"./data/{self.video_label_dir_names[video_number]}/labels/frame_{'{number:06}'.format(number=count)}.txt" for count in range(
+        self.label_paths = {video_number: [f"./data/{self.video_label_dir_names[video_number]}/obj_train_data/frame_{'{number:06}'.format(number=count)}.txt" for count in range(
             self.num_of_label_files[video_number])] for video_number in self.video_numbers_sorted}
 
     def get_video_paths(self):
