@@ -19,8 +19,8 @@ class DatasetBuilder:
             os.popen(
                 f'cp {self.label_paths[video_number][count]} data/all_videos/labels/{parsed_file_name}_frame_{framecount}.txt')
             success, image = vidcap.read()
-            print('Read a new frame: ', success)
             count += 1
+        print('Finished converting:', parsed_file_name)
 
     def parse_video_label_directories(self):
         # Fetch labeled video numbers
