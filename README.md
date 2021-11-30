@@ -1,4 +1,4 @@
-# LiDAR detection project
+# LiDAR object detection project
 
 ## How to run
 
