@@ -1,7 +1,7 @@
 path: ../../data/all_videos_split/
 train: images/train
-val: images/train
-test: images/train
+val: images/val
+test: images/test
 
 # Classes
 nc: 8
