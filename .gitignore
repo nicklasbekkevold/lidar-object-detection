@@ -135,3 +135,5 @@ dmypy.json
 yolov5/
 
 data/all_videos_split/
+data/all_videos_merged/
+data/all_videos/
