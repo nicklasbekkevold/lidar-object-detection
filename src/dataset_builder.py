@@ -107,11 +107,11 @@ class DatasetBuilder:
 
     def convert_videos_to_frames_and_combine_patches(self):
         for video_number, video_files in self.video_paths.items():
-            self.convert_to_frames_and_combine(video_number, video_files)
+            self.convert_to_frames_and_combine_patches(video_number, video_files)
 
     def convert_videos_to_frames_and_combine(self):
         for video_number, video_files in self.video_paths.items():
-            self.convert_to_frames_and_combine_patches(video_number, video_files)
+            self.convert_to_frames_and_combine(video_number, video_files)
 
     def parse_video_label_directories(self):
         # Fetch labeled video numbers
