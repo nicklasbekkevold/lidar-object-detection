@@ -47,7 +47,7 @@ class DatasetBuilder:
                         # if x_center - (width / 2) < 0 or x_center + (width / 2) > multiplier:
                         #    width = min(x_center - bounds[0], bounds[1] - x_center) * 2
                         new_label_files[i] += " ".join(
-                            [str(val) for val in (cls, x_center / 1024, y_center_normalized, width / 1024, height_normalized)]) + "\n"
+                            [str(val) for val in (cls, x_center / multiplier, y_center_normalized, width / multiplier, height_normalized)]) + "\n"
         return new_label_files
 
     def convert_videos_to_frames(self):
