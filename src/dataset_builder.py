@@ -31,6 +31,25 @@ class DatasetBuilder:
 
         print('Finished converting:', parsed_file_name)
 
+    def split_labels_to_squares(self, label_file):
+        new_label_files = ['' for i in range(8)]
+        multiplier = 128
+        with open(label_file, 'r') as file:
+            labels = file.readlines()
+            for i in range(8):
+                bounds = i * multiplier, (i + 1) * multiplier
+                for label in labels:
+                    cls, x_center_normalized, y_center_normalized, width_normalized, height_normalized = label.split()
+                    x_center = float(x_center_normalized) * 1024
+                    width = float(width_normalized) * 1024
+                    if x_center > bounds[0] and x_center < bounds[1]:
+                        x_center = x_center - bounds[0]
+                        if x_center - (width / 2) < 0 or x_center + (width / 2) > multiplier:
+                            width = min(x_center - bounds[0], bounds[1] - x_center) * 2
+                        new_label_files[i] += " ".join(
+                            [str(val) for val in (cls, x_center / 1024, y_center_normalized, width / 1024, height_normalized)]) + "\n"
+        return new_label_files
+
     def convert_videos_to_frames(self):
         for video_number, video_files in self.video_paths.items():
             for video_file in video_files:
