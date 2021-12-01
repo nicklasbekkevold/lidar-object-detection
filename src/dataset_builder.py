@@ -32,7 +32,7 @@ class DatasetBuilder:
         print('Finished converting:', parsed_file_name)
 
     def split_labels_to_squares(self, label_file):
-        new_label_files = ['' for i in range(8)]
+        new_label_files = ['' for _ in range(8)]
         multiplier = 128
         with open(label_file, 'r') as file:
             labels = file.readlines()
@@ -44,8 +44,8 @@ class DatasetBuilder:
                     width = float(width_normalized) * 1024
                     if x_center > bounds[0] and x_center < bounds[1]:
                         x_center = x_center - bounds[0]
-                        if x_center - (width / 2) < 0 or x_center + (width / 2) > multiplier:
-                            width = min(x_center - bounds[0], bounds[1] - x_center) * 2
+                        # if x_center - (width / 2) < 0 or x_center + (width / 2) > multiplier:
+                        #    width = min(x_center - bounds[0], bounds[1] - x_center) * 2
                         new_label_files[i] += " ".join(
                             [str(val) for val in (cls, x_center / 1024, y_center_normalized, width / 1024, height_normalized)]) + "\n"
         return new_label_files
