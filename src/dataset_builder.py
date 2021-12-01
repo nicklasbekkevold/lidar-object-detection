@@ -1,6 +1,6 @@
 import os
 import sys
-
+import numpy as np
 import cv2
 
 from image_transformations import channels_to_rgb
@@ -56,9 +56,43 @@ class DatasetBuilder:
 
         print('Finished converting and merging:', parsed_file_name)
 
-    def convert_videos_to_frames_and_combine(self):
+    def convert_to_frames_and_combine_patches(self, video_number, video_files):
+        parsed_file_name = video_files[0].split('/')[-1].split('_')[0]
+        video_captures = list(map(cv2.VideoCapture, sorted(video_files)))
+
+        frame_number = 0
+
+        successes, channels = list(zip(*map(cv2.VideoCapture.read, video_captures)))
+        while all(successes):
+            # These needs to match
+            image_file_names = [
+                f'data/all_videos_merged/images/{parsed_file_name}_frame_{frame_number:06}_patch_{patch}.jpg' for patch in range(8)]
+            label_file_names = [
+                f'data/all_videos_merged/labels/{parsed_file_name}_frame_{frame_number:06}_patch_{patch}.txt' for patch in range(8)]
+            split_labels = self.split_labels_to_squares(self.label_paths[video_number][frame_number])
+
+            images = []
+            for channel in channels:
+                images.append(np.split(channel, 8, axis=1))
+            i = 0
+            for channel_patches in zip(images[0], images[1], images[2]):
+                channels_to_rgb(channel_patches, image_file_names[i])  # save frame as JPEG file
+                with open(label_file_names[i], 'w') as file:
+                    file.write(split_labels[i])
+                i += 1
+
+            successes, channels = list(zip(*map(cv2.VideoCapture.read, video_captures)))
+            frame_number += 1
+
+        print('Finished converting and merging:', parsed_file_name)
+
+    def convert_videos_to_frames_and_combine_patches(self):
         for video_number, video_files in self.video_paths.items():
             self.convert_to_frames_and_combine(video_number, video_files)
+
+    def convert_videos_to_frames_and_combine(self):
+        for video_number, video_files in self.video_paths.items():
+            self.convert_to_frames_and_combine_patches(video_number, video_files)
 
     def parse_video_label_directories(self):
         # Fetch labeled video numbers
@@ -99,7 +133,7 @@ class DatasetBuilder:
         except OSError:
             pass
 
-    def build(self, combine_channels):
+    def build(self, combine_channels, patches):
         folder_name = 'all_videos_merged' if combine_channels else 'all_videos'
 
         self.parse_video_label_directories()
@@ -108,7 +142,9 @@ class DatasetBuilder:
         self.get_video_paths()
         self.make_dirs_if_not_exists(folder_name)
 
-        if combine_channels:
+        if patches:
+            self.convert_videos_to_frames_and_combine_patches()
+        elif combine_channels:
             self.convert_videos_to_frames_and_combine()
         else:
             self.convert_videos_to_frames()
@@ -116,6 +152,6 @@ class DatasetBuilder:
 
 if __name__ == '__main__':
     combine_channels = len(sys.argv) > 1 and sys.argv[1] == '--merge'
-
+    patches = len(sys.argv) > 2 and sys.argv[2] == '--patches'
     dataset_builder = DatasetBuilder()
-    dataset_builder.build(combine_channels=combine_channels)
+    dataset_builder.build(combine_channels=combine_channels, patches=patches)
