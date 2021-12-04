@@ -99,7 +99,7 @@ class DatasetBuilder:
             i = 0
             for channel_patches in zip(images[0], images[1], images[2]):
                 channels_to_rgb(channel_patches, image_file_names[i])  # save frame as JPEG file
-                if len(split_labels[i]) < 1:
+                if len(split_labels[i]) > 0:
                     with open(label_file_names[i], 'w') as file:
                         file.write(split_labels[i])
                 i += 1
@@ -133,7 +133,9 @@ class DatasetBuilder:
         for directory in directories:
             if directory not in ['all_videos', 'all_videos_merged']:
                 _, _, files = next(os.walk(f'./data/{directory}/obj_train_data', topdown=True))
-                self.num_of_label_files[int(directory.split('_')[0])] = len(files)
+                files = sorted(files)
+                self.num_of_label_files[int(directory.split('_')[0])] = int(
+                    files[-1].split("frame_")[1].strip(".txt")) + 1
 
     def generate_label_paths(self):
         self.label_paths = {video_number: [f'./data/{self.video_label_dir_names[video_number]}/obj_train_data/frame_{count:06}.txt' for count in range(
