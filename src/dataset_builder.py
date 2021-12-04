@@ -34,20 +34,23 @@ class DatasetBuilder:
     def split_labels_to_squares(self, label_file):
         new_label_files = ['' for _ in range(8)]
         multiplier = 128
-        with open(label_file, 'r') as file:
-            labels = file.readlines()
-            for i in range(8):
-                bounds = i * multiplier, (i + 1) * multiplier
-                for label in labels:
-                    cls, x_center_normalized, y_center_normalized, width_normalized, height_normalized = label.split()
-                    x_center = float(x_center_normalized) * 1024
-                    width = float(width_normalized) * 1024
-                    if x_center > bounds[0] and x_center < bounds[1]:
-                        x_center = x_center - bounds[0]
-                        # if x_center - (width / 2) < 0 or x_center + (width / 2) > multiplier:
-                        #    width = min(x_center - bounds[0], bounds[1] - x_center) * 2
-                        new_label_files[i] += " ".join(
-                            [str(val) for val in (cls, x_center / multiplier, y_center_normalized, width / multiplier, height_normalized)]) + "\n"
+        try:
+            with open(label_file, 'r') as file:
+                labels = file.readlines()
+                for i in range(8):
+                    bounds = i * multiplier, (i + 1) * multiplier
+                    for label in labels:
+                        cls, x_center_normalized, y_center_normalized, width_normalized, height_normalized = label.split()
+                        x_center = float(x_center_normalized) * 1024
+                        width = float(width_normalized) * 1024
+                        if x_center > bounds[0] and x_center < bounds[1]:
+                            x_center = x_center - bounds[0]
+                            # if x_center - (width / 2) < 0 or x_center + (width / 2) > multiplier:
+                            #    width = min(x_center - bounds[0], bounds[1] - x_center) * 2
+                            new_label_files[i] += " ".join(
+                                [str(val) for val in (cls, x_center / multiplier, y_center_normalized, width / multiplier, height_normalized)]) + "\n"
+        except FileNotFoundError:
+            pass
         return new_label_files
 
     def convert_videos_to_frames(self):
@@ -96,8 +99,9 @@ class DatasetBuilder:
             i = 0
             for channel_patches in zip(images[0], images[1], images[2]):
                 channels_to_rgb(channel_patches, image_file_names[i])  # save frame as JPEG file
-                with open(label_file_names[i], 'w') as file:
-                    file.write(split_labels[i])
+                if len(split_labels[i]) < 1:
+                    with open(label_file_names[i], 'w') as file:
+                        file.write(split_labels[i])
                 i += 1
 
             successes, channels = list(zip(*map(cv2.VideoCapture.read, video_captures)))
