@@ -45,8 +45,11 @@ class DatasetBuilder:
                         width = float(width_normalized) * 1024
                         if x_center > bounds[0] and x_center < bounds[1]:
                             x_center = x_center - bounds[0]
-                            # if x_center - (width / 2) < 0 or x_center + (width / 2) > multiplier:
-                            #    width = min(x_center - bounds[0], bounds[1] - x_center) * 2
+                            new_bounds = max(0, x_center - (width / 2)), min(multiplier, x_center + (width / 2))
+                            new_width = new_bounds[1] - new_bounds[0]
+                            if new_width < width:
+                                x_center = new_bounds[0] + (new_width / 2)
+                                width = new_width
                             new_label_files[i] += " ".join(
                                 [str(val) for val in (cls, x_center / multiplier, y_center_normalized, width / multiplier, height_normalized)]) + "\n"
         except FileNotFoundError:
