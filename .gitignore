@@ -138,4 +138,3 @@ data/all_videos/
 data/all_videos_split/
 data/all_videos_merged/
 .DS_Store
-detection_runs/
