@@ -14,16 +14,16 @@ class DatasetBuilder:
     def convert_test_to_frames(self):
         test_videos = ['./videos/Video00005_ambient.avi',
                        './videos/Video00005_intensity.avi', './videos/Video00005_range.avi']
-        test_video_name = 'Video00005'
+        test_video_names = ['Video00005_ambient', 'Video00005_intensity', 'Video00005_range']
         test_label_paths = [f'./test_labels/frame_{count:06}.txt' for count in range(101)]
-        for video in test_videos:
-            video_capture = cv2.VideoCapture(video)
+        for i in range(len(test_videos)):
+            video_capture = cv2.VideoCapture(test_videos[i])
             frame_number = 0
             success, image = video_capture.read()
             while success:
                 # These needs to match
-                image_file_name = f'data/all_videos_split/images/test/{test_video_name}_frame_{frame_number:06}.jpg'
-                label_file_name = f'data/all_videos_split/labels/test/{test_video_name}_frame_{frame_number:06}.txt'
+                image_file_name = f'data/all_videos_split/images/test/{test_video_names[i]}_frame_{frame_number:06}.jpg'
+                label_file_name = f'data/all_videos_split/labels/test/{test_video_names[i]}_frame_{frame_number:06}.txt'
 
                 cv2.imwrite(image_file_name, image)  # save frame as JPEG file
                 os.popen(f'cp {test_label_paths[frame_number]} {label_file_name}')  # copy corresponding label
@@ -31,7 +31,7 @@ class DatasetBuilder:
                 success, image = video_capture.read()
                 frame_number += 1
 
-            print('Finished converting:', video.split("/")[-1])
+            print('Finished converting:', test_video_names[i])
 
     def convert_to_frames(self, video_number, video_file):
         parsed_file_name = video_file.split('/')[-1].split('.')[0]
