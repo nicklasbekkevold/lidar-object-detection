@@ -11,6 +11,28 @@ class DatasetBuilder:
     def __init__(self):
         self.video_numbers_sorted = []
 
+    def convert_test_to_frames(self):
+        test_videos = ['./videos/Video00005_ambient.avi',
+                       './videos/Video00005_intensity.avi', './videos/Video00005_range.avi']
+        test_video_name = 'Video00005'
+        test_label_paths = [f'./test_labels/frame_{count:06}.txt' for count in range(101)]
+        for video in test_videos:
+            video_capture = cv2.VideoCapture(video)
+            frame_number = 0
+            success, image = video_capture.read()
+            while success:
+                # These needs to match
+                image_file_name = f'data/all_videos_split/images/test/{test_video_name}_frame_{frame_number:06}.jpg'
+                label_file_name = f'data/all_videos_split/labels/test/{test_video_name}_frame_{frame_number:06}.txt'
+
+                cv2.imwrite(image_file_name, image)  # save frame as JPEG file
+                os.popen(f'cp {test_label_paths[frame_number]} {label_file_name}')  # copy corresponding label
+
+                success, image = video_capture.read()
+                frame_number += 1
+
+            print('Finished converting:', video.split("/")[-1])
+
     def convert_to_frames(self, video_number, video_file):
         parsed_file_name = video_file.split('/')[-1].split('.')[0]
         video_capture = cv2.VideoCapture(video_file)
@@ -179,7 +201,12 @@ class DatasetBuilder:
 
 
 if __name__ == '__main__':
-    combine_channels = len(sys.argv) > 1 and sys.argv[1] == '--merge'
-    patches = len(sys.argv) > 2 and sys.argv[2] == '--patches'
-    dataset_builder = DatasetBuilder()
-    dataset_builder.build(combine_channels=combine_channels, patches=patches)
+    test = len(sys.argv) > 1 and sys.argv[1] == '--test'
+    if test:
+        dataset_builder = DatasetBuilder()
+        dataset_builder.convert_test_to_frames()
+    else:
+        combine_channels = len(sys.argv) > 1 and sys.argv[1] == '--merge'
+        patches = len(sys.argv) > 2 and sys.argv[2] == '--patches'
+        dataset_builder = DatasetBuilder()
+        dataset_builder.build(combine_channels=combine_channels, patches=patches)
