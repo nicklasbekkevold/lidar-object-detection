@@ -1,8 +1,8 @@
 # LiDAR object detection project
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="NTNU_black_and_white.png">
-  <img align="center" alt="NTNU logo" src="NTNU.png">
+  <source media="(prefers-color-scheme: dark)" srcset="./NTNU_black_and_white.png">
+  <img align="center" alt="NTNU logo" src="./NTNU.png">
 </picture>
 
 ## How to run
